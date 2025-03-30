@@ -6,6 +6,8 @@ class AppConstants {
     lon: -0.12363193061883422,
   );
 
-  static const buttonColor = Color(0xFFFF5700);
   static const baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+
+  static const backgroundColor = Color(0xFFE6E6E6);
+  static const primaryColor = Color(0xFFFF5700);
 }

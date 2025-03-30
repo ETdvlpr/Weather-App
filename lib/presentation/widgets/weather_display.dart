@@ -30,15 +30,23 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
           SliverList(
             delegate: SliverChildListDelegate([
               const SizedBox(height: 16),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final aspectRatio =
-                      constraints.maxWidth > 300 ? 16 / 9 : 4 / 3;
-                  return AspectRatio(
-                    aspectRatio: aspectRatio,
-                    child: _buildWeatherIcon(widget.weather.weatherIcon ?? ''),
-                  );
-                },
+              Container(
+                decoration: BoxDecoration(
+                  color: AppConstants.backgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final aspectRatio =
+                        constraints.maxWidth > 300 ? 16 / 9 : 4 / 3;
+                    return AspectRatio(
+                      aspectRatio: aspectRatio,
+                      child: _buildWeatherIcon(
+                        widget.weather.weatherIcon ?? '',
+                      ),
+                    );
+                  },
+                ),
               ),
               const SizedBox(height: 32),
               Text(
@@ -86,7 +94,7 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
                   const SizedBox(width: 16),
                   CupertinoSwitch(
                     value: !isCelsius,
-                    activeTrackColor: const Color(0xFFFF5700),
+                    activeTrackColor: AppConstants.primaryColor,
                     onChanged:
                         (value) => setState(() => isCelsius = !isCelsius),
                   ),
@@ -99,34 +107,31 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
             hasScrollBody: false,
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF5700),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 24,
-                    ),
-                    minimumSize: const Size.fromHeight(48),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppConstants.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  onPressed:
-                      () => context.read<WeatherBloc>().add(
-                        FetchWeather(
-                          lat: AppConstants.defaultLocation.lat,
-                          lon: AppConstants.defaultLocation.lon,
-                        ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 24,
+                  ),
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                onPressed:
+                    () => context.read<WeatherBloc>().add(
+                      FetchWeather(
+                        lat: AppConstants.defaultLocation.lat,
+                        lon: AppConstants.defaultLocation.lon,
                       ),
-                  child: const Text(
-                    'Refresh',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18,
-                      color: Colors.white,
                     ),
+                child: const Text(
+                  'Refresh',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -153,8 +158,6 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
     log('https://openweathermap.org/img/wn/$iconCode@4x.png');
     return CachedNetworkImage(
       imageUrl: 'https://openweathermap.org/img/wn/$iconCode@4x.png',
-      width: 400,
-      height: 400,
       placeholder:
           (context, url) => const Center(child: CircularProgressIndicator()),
       errorWidget:
