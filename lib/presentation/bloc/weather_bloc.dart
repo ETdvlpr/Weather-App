@@ -16,6 +16,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   WeatherBloc({required this.weatherRepository}) : super(WeatherInitial()) {
     // Register event handler for fetching weather
     on<FetchWeather>(_onFetchWeather);
+    on<ChangeTemperatureUnit>(_onChangeTemperatureUnit);
   }
 
   Future<void> _onFetchWeather(
@@ -41,6 +42,21 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
                 message: 'An unknown error occurred',
               ),
             ),
+      );
+    }
+  }
+
+  Future<void> _onChangeTemperatureUnit(
+    ChangeTemperatureUnit event,
+    Emitter<WeatherState> emit,
+  ) async {
+    if (state is WeatherLoaded) {
+      final currentState = state as WeatherLoaded;
+      emit(
+        WeatherLoaded(
+          weather: currentState.weather,
+          isCelsius: event.unit == 'C',
+        ),
       );
     }
   }

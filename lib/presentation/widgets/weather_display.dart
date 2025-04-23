@@ -8,17 +8,10 @@ import 'package:weather_app/domain/entities/weather.dart';
 import 'package:weather_app/presentation/bloc/weather_bloc.dart';
 import 'package:weather_app/util/constants.dart';
 
-class WeatherDisplay extends StatefulWidget {
+class WeatherDisplay extends StatelessWidget {
   final Weather weather;
 
   const WeatherDisplay({super.key, required this.weather});
-
-  @override
-  State<WeatherDisplay> createState() => _WeatherDisplayState();
-}
-
-class _WeatherDisplayState extends State<WeatherDisplay> {
-  bool isCelsius = true;
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +34,7 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
                         constraints.maxWidth > 300 ? 16 / 9 : 4 / 3;
                     return AspectRatio(
                       aspectRatio: aspectRatio,
-                      child: _buildWeatherIcon(
-                        widget.weather.weatherIcon ?? '',
-                      ),
+                      child: _buildWeatherIcon(weather.weatherIcon ?? ''),
                     );
                   },
                 ),
@@ -66,10 +57,15 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
                 textAlign: TextAlign.left,
               ),
               const SizedBox(height: 8),
-              Text(
-                _getTemperature(widget.weather.temperature),
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.left,
+              BlocBuilder<WeatherBloc, WeatherState>(
+                builder: (context, state) {
+                  final isCelsius = state is WeatherLoaded && state.isCelsius;
+                  return Text(
+                    _getTemperature(weather.temperature, isCelsius),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textAlign: TextAlign.left,
+                  );
+                },
               ),
               const SizedBox(height: 8),
               Text(
@@ -79,7 +75,7 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
               ),
               const SizedBox(height: 8),
               Text(
-                widget.weather.locationName,
+                weather.locationName,
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.left,
               ),
@@ -92,11 +88,20 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(width: 16),
-                  CupertinoSwitch(
-                    value: !isCelsius,
-                    activeTrackColor: AppConstants.primaryColor,
-                    onChanged:
-                        (value) => setState(() => isCelsius = !isCelsius),
+                  BlocBuilder<WeatherBloc, WeatherState>(
+                    builder: (context, state) {
+                      final isCelsius =
+                          state is WeatherLoaded && state.isCelsius;
+                      return CupertinoSwitch(
+                        value: !isCelsius,
+                        activeTrackColor: AppConstants.primaryColor,
+                        onChanged: (value) {
+                          context.read<WeatherBloc>().add(
+                            ChangeTemperatureUnit(!value ? 'C' : 'F'),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ],
               ),
@@ -143,7 +148,7 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
   }
 
   // Convert Kelvin to Celsius or Fahrenheit
-  String _getTemperature(double kelvin) {
+  String _getTemperature(double kelvin, bool isCelsius) {
     return isCelsius
         ? '${(kelvin - 273.15).toStringAsFixed(1)}°C'
         : '${((kelvin - 273.15) * 9 / 5 + 32).toStringAsFixed(1)}°F';

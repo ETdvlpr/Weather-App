@@ -17,3 +17,13 @@ class FetchWeather extends WeatherEvent {
   @override
   List<Object> get props => [lat, lon];
 }
+
+// weather in celsius or fahrenheit
+class ChangeTemperatureUnit extends WeatherEvent {
+  final String unit;
+
+  const ChangeTemperatureUnit(this.unit);
+
+  @override
+  List<Object> get props => [unit];
+}

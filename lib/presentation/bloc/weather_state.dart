@@ -16,11 +16,12 @@ class WeatherLoading extends WeatherState {}
 // State when weather data is successfully loaded
 class WeatherLoaded extends WeatherState {
   final Weather weather;
+  final bool isCelsius;
 
-  const WeatherLoaded({required this.weather});
+  const WeatherLoaded({required this.weather, this.isCelsius = true});
 
   @override
-  List<Object> get props => [weather];
+  List<Object> get props => [weather, isCelsius];
 }
 
 // State when an error occurs
