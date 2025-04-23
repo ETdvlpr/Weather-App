@@ -56,6 +56,17 @@ lib/
     └── constants.dart              # App constants
 ```
 
+## Screenshots
+### Home Screen
+![Home Screen](screenshot/home.jpg)
+
+### Video Demo
+
+<video width="640" height="360" controls>
+   <source src="screenshot/video.mp4" type="video/mp4">
+   Your browser does not support the video tag.
+</video>
+
 ## Dependencies
 - **bloc**: State management
 - **dio**: HTTP client
